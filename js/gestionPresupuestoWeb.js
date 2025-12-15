@@ -28,7 +28,7 @@ function mostrarGastoWeb(idElemento, gastos){
         divGasto.append(divFec)
         let divVal = Utils.divWithClass("gasto-valor")
         divVal.textContent = gasto.valor
-        divGasto.append(divVal)
+        divGasto.append(divVal)git pu
         let divEti = Utils.divWithClass("gasto-etiquetas")
         divGasto.append(divEti)
         for(let etiqueta of gasto.etiquetas)
@@ -167,9 +167,13 @@ function EditarHandleFormulario(){
         this.divGasto.append(formulario)
         let botonEditarForm = this.divGasto.querySelector(`[type="click"]`)
         botonEditarForm.setAttribute("disabled", "true")
-        formulario.style="display:flex; flex-direction:column; flex-basis: 100%;"
+        formulario.style="display:flex; flex-direction:column; flex-basis: 100%; "
+        let elementosForm = formulario.getElementsByClassName("form-control")
+        for(let div of elementosForm)
+        {
+            div.style="width:75%; align-content:center;"
+        }
         let botonForm = this.divGasto.getElementsByClassName("gasto-editar-formulario")
-        this.divGasto.style = "flex-wrap: wrap;"
         botonForm[0].setAttribute("disabled", "true")
         let botonEditarCancelar = formulario.getElementsByClassName("cancelar")
         botonEditarCancelar[0].addEventListener("click", (e)=>{
@@ -181,8 +185,8 @@ function EditarHandleFormulario(){
         formulario[1].value = this.gasto.valor
         formulario[2].value = Utils.formatDate(this.gasto.fecha)
         formulario[3].value = this.gasto.etiquetas
-        console.log(formulario[0].value)
         let botonCancel = this.divGasto.getElementsByClassName("cancelar")
+        botonCancel.style = "widt"
         let objCancelar = new ManejaCancelar
         botonCancel[0].addEventListener("click", objCancelar)
         formulario.addEventListener("submit", (e) => {
