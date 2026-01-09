@@ -97,11 +97,9 @@ function repintar(){
     let titulo = document.createElement("h1")
     titulo.innerText = "Gastos Filtrados"
     divFiltrado.append(titulo)
-    let form = document.forms[0]
-    if(form != undefined)
-        form.remove()
-    if(form != undefined)
-        form.remove()
+    // let form = document.forms[0]
+    // if(form != undefined)
+    //     form.remove()
 }
 function actualizarPresupuestoWeb(){
     let botonPresupuesto = document.getElementById("actualizarpresupuesto")
@@ -270,6 +268,29 @@ function filtrarGastosWeb(){
     })
     
 }
+function guardarGastosWeb(){
+    let botonGuardarGastos = document.getElementById("guardar-gastos");
+    let gastos = gestionPresupuesto.listarGastos();
+    botonGuardarGastos.addEventListener("click", ()=>{
+        localStorage.setItem(`GestorGastosDWEC`, JSON.stringify(gastos))
+    });
+}
+function cargarGastosWeb(){
+    let botonCargarGastos = document.getElementById("cargar-gastos")
+    botonCargarGastos.addEventListener("click", () =>{
+        let gastos = localStorage.getItem("GestorGastosDWEC")
+        if(gastos != null)
+        {
+            gastos = JSON.parse(gastos)
+            gestionPresupuesto.cargarGastos(gastos)
+            repintar()
+        }
+        else{
+            gestionPresupuesto.cargarGastos([])
+            repintar()
+        }
+    })
+}
 
 export{
     mostrarDatoEnId,
@@ -279,5 +300,7 @@ export{
     actualizarPresupuestoWeb,
     nuevoGastoWeb,
     nuevoGastoWebFormulario,
-    filtrarGastosWeb
+    filtrarGastosWeb,
+    guardarGastosWeb,
+    cargarGastosWeb
 }
