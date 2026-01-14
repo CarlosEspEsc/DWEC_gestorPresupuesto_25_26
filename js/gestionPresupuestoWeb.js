@@ -281,8 +281,7 @@ function cargarGastosWeb(){
         let gastos = localStorage.getItem("GestorGastosDWEC")
         if(gastos != null)
         {
-            gastos = JSON.parse(gastos)
-            gestionPresupuesto.cargarGastos(gastos)
+            gestionPresupuesto.cargarGastos(JSON.parse(gastos))
             repintar()
         }
         else{

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promesas</title>
+</head>
+<body>
+    <script>
+    // function temporizador(tiempo) {
+    //     return new Promise((resolver, rechazar) => 
+    //     {
+    //         if (typeof tiempo !== "number" || !Number.isFinite(tiempo) || tiempo < 0) 
+    //             {
+    //             rechazar(new Error("Tiempo inválido"));
+    //             return;
+    //             }
+    //         setTimeout(() => {
+    //                 resolver(`Temporizador de ${tiempo} ms terminado`);
+    //             }, tiempo);
+    //     });}
+    //     temporizador(3000)
+    //         .then((resultado) => {
+    //             console.log(resultado)
+    //         temporizador(5000)
+    //         .then((resultado) => {
+    //             console.log(resultado)
+    //         temporizador(4000)
+    //         .then((resultado) => 
+    //             console.log(resultado))})})
+
+    async function temporizadores() 
+    {
+        let temp1 = await setTimeout(() => {"primer temporizador"}, 2000)
+        let temp2 = await setTimeout(() => {"segundo temporizador"}, 5000)
+        let temp3 = await setTimeout(() => {"tercer temporizador"}, 3000)
+        Promise.all([console.log(temp1), console.log(temp2), console.log(temp3)])
+    }
+    temporizadores()
+    
+    </script>
+</body>
+</html>
