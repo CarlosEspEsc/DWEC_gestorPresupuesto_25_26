@@ -291,6 +291,21 @@ function cargarGastosWeb(){
     })
 }
 
+function cargarGastosApi()
+{
+    let botonCargarGastosApi = document.getElementById("cargar-gastos-api")
+    botonCargarGastosApi.addEventListener("click",  async () =>{
+        let nombreUsuario = document.getElementById("nombre_usuario").value
+        console.log("prueba")
+        if(nombreUsuario == "")
+            return
+        let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}`)
+        let json = await promise.json();
+        gestionPresupuesto.cargarGastos(json)
+        repintar()
+    })
+}
+
 export{
     mostrarDatoEnId,
     mostrarGastoWeb,
@@ -301,5 +316,6 @@ export{
     nuevoGastoWebFormulario,
     filtrarGastosWeb,
     guardarGastosWeb,
-    cargarGastosWeb
+    cargarGastosWeb,
+    cargarGastosApi
 }

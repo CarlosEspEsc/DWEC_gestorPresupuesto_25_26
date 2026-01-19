@@ -6,7 +6,7 @@
     <title>Promesas</title>
 </head>
 <body>
-    <script>
+    <script type="module">
     // function temporizador(tiempo) {
     //     return new Promise((resolver, rechazar) => 
     //     {
@@ -31,12 +31,12 @@
 
     async function temporizadores() 
     {
-        let temp1 = await setTimeout(() => {"primer temporizador"}, 2000)
-        let temp2 = await setTimeout(() => {"segundo temporizador"}, 5000)
-        let temp3 = await setTimeout(() => {"tercer temporizador"}, 3000)
+        let temp1 =  setTimeout(() => {"primer temporizador"}, 2000)
+        let temp2 =  setTimeout(() => {"segundo temporizador"}, 5000)
+        let temp3 =  setTimeout(() => {"tercer temporizador"}, 3000)
         Promise.all([console.log(temp1), console.log(temp2), console.log(temp3)])
     }
-    temporizadores()
+    await temporizadores()
     
     </script>
 </body>
