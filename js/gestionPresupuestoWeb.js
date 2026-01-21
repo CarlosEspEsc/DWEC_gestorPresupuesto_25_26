@@ -10,7 +10,7 @@ function mostrarDatoEnId(idElemento, valor){
     }
     else
 
-        console.log(`La función mostrarDatoEnId con idElemento + ${idElemento} y valor ${valor} ha fallado`)
+    console.log(`La función mostrarDatoEnId con idElemento + ${idElemento} y valor ${valor} ha fallado`)
 }
 function mostrarGastoWeb(idElemento, gastos){
     let elem = document.getElementById(idElemento)
@@ -104,9 +104,9 @@ function repintar(){
     let titulo = document.createElement("h1")
     titulo.innerText = "Gastos Filtrados"
     divFiltrado.append(titulo)
-    // let form = document.forms[0]
-    // if(form != undefined)
-    //     form.remove()
+    let form = document.forms[0]
+    if(form != undefined)
+        form.remove()
 }
 function actualizarPresupuestoWeb(){
     let botonPresupuesto = document.getElementById("actualizarpresupuesto")
@@ -171,8 +171,6 @@ function EditarHandleFormulario(){
         let clonForm = document.getElementById("formulario-template").content.cloneNode(true);
         let formulario = clonForm.querySelector("form")
         this.divGasto.append(formulario)
-        let botonEditarForm = this.divGasto.querySelector(`[type="click"]`)
-        botonEditarForm.setAttribute("disabled", "true")
         formulario.style="display:flex; flex-direction:column; flex-basis: 100%; "
         let elementosForm = formulario.getElementsByClassName("form-control")
         for(let div of elementosForm)
@@ -184,7 +182,8 @@ function EditarHandleFormulario(){
         let botonEditarCancelar = formulario.getElementsByClassName("cancelar")
         botonEditarCancelar[0].addEventListener("click", (e)=>{
             e.preventDefault()
-            botonEditarForm.removeAttribute("disabled")
+            let botonForm = this.divGasto.getElementsByClassName("gasto-editar-formulario")
+            botonForm[0].removeAttribute("disabled")
             formulario.remove()
         })
         formulario[0].value = this.gasto.descripcion
@@ -192,7 +191,6 @@ function EditarHandleFormulario(){
         formulario[2].value = Utils.formatDate(this.gasto.fecha)
         formulario[3].value = this.gasto.etiquetas
         let botonCancel = this.divGasto.getElementsByClassName("cancelar")
-        botonCancel.style = "widt"
         let objCancelar = new ManejaCancelar
         objCancelar.formulario = formulario
         botonCancel[0].addEventListener("click", objCancelar)
@@ -204,6 +202,10 @@ function EditarHandleFormulario(){
             this.gasto.etiquetas = formulario[3].value.split(",")
             repintar()
         })
+        let botonAñadirAPI = formulario.getElementsByClassName("gasto-enviar-api")
+        let objEnviarAPI = new EnviarAPI()
+        objEnviarAPI.gasto = this.gasto
+        botonAñadirAPI.addEventListener("click", objEnviarAPI)
     }
 }
 
@@ -224,6 +226,19 @@ function nuevoGastoWebFormulario(){
         manejadorCancelar.formulario = formulario
         botonCancelar[0].addEventListener("click", manejadorCancelar)
         botonAñadirForm.setAttribute("disabled", "true")
+        // let botonAñadirAPI = formulario.getElementsByClassName("gasto-enviar-api")
+        // let objEnviarAPI = new EnviarAPI
+        // let form = document.forms[0]
+        // let concepto = form[0].value;
+        // let valorTotal = form[1].value;
+        // valorTotal = +valorTotal;
+        // let fechaDelGasto = new Date();
+        // fechaDelGasto = form[2].value
+        // let etiquetasGasto = form[3].value;
+        // let arrayEtiquetas = etiquetasGasto.split(",")
+        // let nuevoGasto = new gestionPresupuesto.CrearGasto(concepto, valorTotal, fechaDelGasto, ...arrayEtiquetas)
+        // objEnviarAPI.gasto = nuevoGasto
+        // botonAñadirAPI.addEventListener("click", objEnviarAPI)
     })
 }
 function ManejaCancelar(event){
@@ -301,11 +316,13 @@ function cargarGastosWeb(){
         }
     })
 }
-
-function cargarGastosApi()
-{
+function cargarGastosApi(){
     let botonCargarGastosApi = document.getElementById("cargar-gastos-api")
-    botonCargarGastosApi.addEventListener("click",  async () =>{
+    botonCargarGastosApi.addEventListener("click", cargarGastos)
+}
+
+async function cargarGastos()
+{
         let nombreUsuario = document.getElementById("nombre_usuario").value
         if(nombreUsuario == "")
             return
@@ -313,20 +330,31 @@ function cargarGastosApi()
         let json = await promise.json();
         gestionPresupuesto.cargarGastos(json)
         repintar()
-    })
 }
+
 function BorrarAPI(){
     this.handleEvent = async function(e){
         let nombreUsuario = document.getElementById("nombre_usuario").value
-        let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}`,
-            {   method: DELETE,
-                body: this.gasto.id
+        let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}/${this.gasto.gastoId}`,
+            {
+                method: "DELETE"
             })
         console.log(await promise.text())
+        cargarGastos();
     }
 }
-function (){
+function EnviarAPI(){
+    this.handleEvent = async function(e){
+        let nombreUsuario = document.getElementById("nombre_usuario").value
 
+        let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}`,
+        {
+            method: "PUT",
+            body: JSON.stringify()
+        })
+        console.log(await promise.text())
+        cargarGastos();
+    }
 }
 export{
     mostrarDatoEnId,
