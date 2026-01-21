@@ -28,7 +28,7 @@ function mostrarGastoWeb(idElemento, gastos){
         divGasto.append(divFec)
         let divVal = Utils.divWithClass("gasto-valor")
         divVal.textContent = gasto.valor
-        divGasto.append(divVal)git pu
+        divGasto.append(divVal)
         let divEti = Utils.divWithClass("gasto-etiquetas")
         divGasto.append(divEti)
         for(let etiqueta of gasto.etiquetas)
@@ -57,6 +57,13 @@ function mostrarGastoWeb(idElemento, gastos){
         objManejadorBorrado.gasto = gasto
         botonBorrarGasto.addEventListener("click", objManejadorBorrado)
         divEti.append(botonBorrarGasto)
+        let botonBorrarAPI = Utils.buttonWithClass("gasto-borrar-api")
+        botonBorrarAPI.setAttribute("type", "click")
+        botonBorrarAPI.innerText = "Borrar (API)"
+        let objManejadorBorradoAPI = new BorrarAPI()
+        objManejadorBorradoAPI.gasto = gasto
+        botonBorrarAPI.addEventListener("click", objManejadorBorradoAPI)
+        divEti.append(botonBorrarAPI)
         let botonEditarFormulario = Utils.buttonWithClass("gasto-editar-formulario")
         botonEditarFormulario.setAttribute("type", "click")
         botonEditarFormulario.innerText = "Editar (formulario)"
@@ -227,7 +234,6 @@ function ManejaCancelar(event){
         {
             this.formulario.remove()
         }
-        // repintar()
     }
 }
 function manejaSubmit(event){
@@ -301,7 +307,6 @@ function cargarGastosApi()
     let botonCargarGastosApi = document.getElementById("cargar-gastos-api")
     botonCargarGastosApi.addEventListener("click",  async () =>{
         let nombreUsuario = document.getElementById("nombre_usuario").value
-        console.log("prueba")
         if(nombreUsuario == "")
             return
         let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}`)
@@ -310,7 +315,19 @@ function cargarGastosApi()
         repintar()
     })
 }
+function BorrarAPI(){
+    this.handleEvent = async function(e){
+        let nombreUsuario = document.getElementById("nombre_usuario").value
+        let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}`,
+            {   method: DELETE,
+                body: this.gasto.id
+            })
+        console.log(await promise.text())
+    }
+}
+function (){
 
+}
 export{
     mostrarDatoEnId,
     mostrarGastoWeb,
