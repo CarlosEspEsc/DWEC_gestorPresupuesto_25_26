@@ -198,7 +198,6 @@ Etiquetas:\n${desplegable}`)
                     return gastos;
 
                 let resultados = [...gastos];
-
                 let fechaDesdeFiltro = new Date(filtro.fechaDesde);
                 let fechaHastaFiltro = new Date(filtro.fechaHasta); 
                 fechaDesdeFiltro = Date.parse(fechaDesdeFiltro);
@@ -251,9 +250,9 @@ Etiquetas:\n${desplegable}`)
                             }
                             resultados = resultados.filter(item => item.etiquetas.some(etiqueta => tags.includes(etiqueta)));
                         }
-                        return resultados;
 
-                    }
+                return resultados;
+                }
 
             function agruparGastos(periodo, etiquetas, fechaDesde, fechaHasta)
             {
@@ -293,7 +292,31 @@ Etiquetas:\n${desplegable}`)
             let arrayEtiquetas = stringFormulario.split(filtroReg)
             return arrayEtiquetas.filter(palabra => palabra != "")
         }
-
+        function cargarGastos(gastosAlmacenamiento) {
+            // gastosAlmacenamiento es un array de objetos "planos"
+            // No tienen acceso a los métodos creados con "CrearGasto":
+            // "anyadirEtiquetas", "actualizarValor",...
+            // Solo tienen guardadas sus propiedades: descripcion, valor, fecha y etiquetas
+          
+            // Reseteamos la variable global "gastos"
+            gastos = [];
+            // Procesamos cada gasto del listado pasado a la función
+            for (let g of gastosAlmacenamiento) {
+                // Creamos un nuevo objeto mediante el constructor
+                // Este objeto tiene acceso a los métodos "anyadirEtiquetas", "actualizarValor",...
+                // Pero sus propiedades (descripcion, valor, fecha y etiquetas) están sin asignar
+                let gastoRehidratado = new CrearGasto();
+                // Copiamos los datos del objeto guardado en el almacenamiento
+                // al gasto rehidratado
+                // https://es.javascript.info/object-copy#cloning-and-merging-object-assign
+                Object.assign(gastoRehidratado, g);
+                // Ahora "gastoRehidratado" tiene las propiedades del gasto
+                // almacenado y además tiene acceso a los métodos de "CrearGasto"
+                  
+                // Añadimos el gasto rehidratado a "gastos"
+                gastos.push(gastoRehidratado)
+            }
+        }
 
 
 
@@ -314,5 +337,6 @@ Etiquetas:\n${desplegable}`)
             calcularBalance,
             filtrarGastos,
             agruparGastos,
-            transformarListadoEtiquetas
+            transformarListadoEtiquetas,
+            cargarGastos,
         }

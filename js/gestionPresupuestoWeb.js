@@ -90,17 +90,16 @@ function repintar(){
     mostrarDatoEnId("presupuesto", gestionPresupuesto.mostrarPresupuesto())
     mostrarDatoEnId("gastos-totales", gestionPresupuesto.calcularTotalGastos()) 
     mostrarDatoEnId("balance-total",  gestionPresupuesto.calcularBalance())
+    let divFiltrado = document.getElementById("listado-gastos-filtrado-1")
     let divGastosCompletos = document.getElementById("listado-gastos-completo")
     divGastosCompletos.innerHTML = ""
     mostrarGastoWeb("listado-gastos-completo", gestionPresupuesto.listarGastos())
     let titulo = document.createElement("h1")
     titulo.innerText = "Gastos Filtrados"
-    divGastosCompletos.append(titulo)
-    let form = document.forms[0]
-    if(form != undefined)
-        form.remove()
-    if(form != undefined)
-        form.remove()
+    divFiltrado.append(titulo)
+    // let form = document.forms[0]
+    // if(form != undefined)
+    //     form.remove()
 }
 function actualizarPresupuestoWeb(){
     let botonPresupuesto = document.getElementById("actualizarpresupuesto")
@@ -206,8 +205,6 @@ function EditarHandleFormulario(){
 function nuevoGastoWebFormulario(){    
     let botonAñadirForm = document.getElementById("anyadirgasto-formulario")
     botonAñadirForm.addEventListener("click", function(event){    
-        if(document.forms.length > 0)
-            return
         let clonForm = document.getElementById("formulario-template").content.cloneNode(true);
         let divBotones = document.getElementById("controlesprincipales")
         let formulario = clonForm.querySelector("form")
@@ -262,7 +259,7 @@ function filtrarGastosWeb(){
         if(formulario[1].value != "")
             filtro.valorMinimo = Number(formulario[1].value)
         if(formulario[2].value != "")
-            filtro.valorMaximo = formulario[2].value
+            filtro.valorMaximo = Number(formulario[2].value)
         if(formulario[0].value != "")
             filtro.descripcionContiene = formulario[0].value
         if(formulario[5].value != "")
@@ -270,10 +267,48 @@ function filtrarGastosWeb(){
         if(filtro == {})
             return
         let gastosFiltrados = gestionPresupuesto.filtrarGastos(filtro)
-        console.log(gastosFiltrados)
-        mostrarGastoWeb("listado-gastos-completos", gastosFiltrados)
+        let divGastosCompletos = document.getElementById("listado-gastos-completo")
+        divGastosCompletos.innerHTML = ""
+        mostrarGastoWeb("listado-gastos-completo", gastosFiltrados)
     })
     
+}
+function guardarGastosWeb(){
+    let botonGuardarGastos = document.getElementById("guardar-gastos");
+    let gastos = gestionPresupuesto.listarGastos();
+    botonGuardarGastos.addEventListener("click", ()=>{
+        localStorage.setItem(`GestorGastosDWEC`, JSON.stringify(gastos))
+    });
+}
+function cargarGastosWeb(){
+    let botonCargarGastos = document.getElementById("cargar-gastos")
+    botonCargarGastos.addEventListener("click", () =>{
+        let gastos = localStorage.getItem("GestorGastosDWEC")
+        if(gastos != null)
+        {
+            gestionPresupuesto.cargarGastos(JSON.parse(gastos))
+            repintar()
+        }
+        else{
+            gestionPresupuesto.cargarGastos([])
+            repintar()
+        }
+    })
+}
+
+function cargarGastosApi()
+{
+    let botonCargarGastosApi = document.getElementById("cargar-gastos-api")
+    botonCargarGastosApi.addEventListener("click",  async () =>{
+        let nombreUsuario = document.getElementById("nombre_usuario").value
+        console.log("prueba")
+        if(nombreUsuario == "")
+            return
+        let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}`)
+        let json = await promise.json();
+        gestionPresupuesto.cargarGastos(json)
+        repintar()
+    })
 }
 
 export{
@@ -284,5 +319,8 @@ export{
     actualizarPresupuestoWeb,
     nuevoGastoWeb,
     nuevoGastoWebFormulario,
-    filtrarGastosWeb
+    filtrarGastosWeb,
+    guardarGastosWeb,
+    cargarGastosWeb,
+    cargarGastosApi
 }
