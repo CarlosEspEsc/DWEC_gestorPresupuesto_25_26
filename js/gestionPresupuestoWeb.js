@@ -205,7 +205,7 @@ function EditarHandleFormulario(){
         let botonAñadirAPI = formulario.getElementsByClassName("gasto-enviar-api")
         let objEnviarAPI = new EnviarAPI()
         objEnviarAPI.gasto = this.gasto
-        botonAñadirAPI.addEventListener("click", objEnviarAPI)
+        botonAñadirAPI[0].addEventListener("click", objEnviarAPI)
     }
 }
 
@@ -346,16 +346,28 @@ function BorrarAPI(){
 function EnviarAPI(){
     this.handleEvent = async function(e){
         let nombreUsuario = document.getElementById("nombre_usuario").value
-
+        let descripcion = "comida pepe"
+        let valor = "22"
+        let fecha = new Date
+        fecha = 20/12/2014
+        let etiquetas = ["comida", "mascota"]
+        // let gasto = {descripcion, valor, fecha, etiquetas}
+        let gasto = new gestionPresupuesto.CrearGasto(descripcion,valor,fecha,etiquetas)
+        let jsonGasto = JSON.stringify(gasto)
+        console.log(jsonGasto)
         let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}`,
         {
-            method: "PUT",
-            body: JSON.stringify()
+            method: "POST",
+            header: {"Content-Type":"application/json"},
+            body: JSON.stringify(gasto)
         })
         console.log(await promise.text())
+        console.log(gasto)
         cargarGastos();
     }
 }
+
+
 export{
     mostrarDatoEnId,
     mostrarGastoWeb,
