@@ -202,10 +202,7 @@ function EditarHandleFormulario(){
             this.gasto.etiquetas = formulario[3].value.split(",")
             repintar()
         })
-        let botonAñadirAPI = formulario.getElementsByClassName("gasto-enviar-api")
-        let objEnviarAPI = new EnviarAPI()
-        objEnviarAPI.gasto = this.gasto
-        botonAñadirAPI[0].addEventListener("click", objEnviarAPI)
+
     }
 }
 
@@ -226,19 +223,10 @@ function nuevoGastoWebFormulario(){
         manejadorCancelar.formulario = formulario
         botonCancelar[0].addEventListener("click", manejadorCancelar)
         botonAñadirForm.setAttribute("disabled", "true")
-        // let botonAñadirAPI = formulario.getElementsByClassName("gasto-enviar-api")
-        // let objEnviarAPI = new EnviarAPI
-        // let form = document.forms[0]
-        // let concepto = form[0].value;
-        // let valorTotal = form[1].value;
-        // valorTotal = +valorTotal;
-        // let fechaDelGasto = new Date();
-        // fechaDelGasto = form[2].value
-        // let etiquetasGasto = form[3].value;
-        // let arrayEtiquetas = etiquetasGasto.split(",")
-        // let nuevoGasto = new gestionPresupuesto.CrearGasto(concepto, valorTotal, fechaDelGasto, ...arrayEtiquetas)
-        // objEnviarAPI.gasto = nuevoGasto
-        // botonAñadirAPI.addEventListener("click", objEnviarAPI)
+        let botonAñadirAPI = formulario.getElementsByClassName("gasto-enviar-api")
+        let objEnviarAPI = new EnviarAPI()
+        objEnviarAPI.formulario = formulario
+        botonAñadirAPI[0].addEventListener("click", objEnviarAPI)
     })
 }
 function ManejaCancelar(event){
@@ -346,23 +334,20 @@ function BorrarAPI(){
 function EnviarAPI(){
     this.handleEvent = async function(e){
         let nombreUsuario = document.getElementById("nombre_usuario").value
-        let descripcion = "comida pepe"
-        let valor = "22"
+        let descripcion = this.formulario[0].value
+        let valor = this.formulario[1].value 
         let fecha = new Date
-        fecha = 20/12/2014
-        let etiquetas = ["comida", "mascota"]
-        // let gasto = {descripcion, valor, fecha, etiquetas}
-        let gasto = new gestionPresupuesto.CrearGasto(descripcion,valor,fecha,etiquetas)
-        let jsonGasto = JSON.stringify(gasto)
-        console.log(jsonGasto)
+        fecha = this.formulario[2].value 
+        let etiquetas = this.formulario[3].value 
+        etiquetas = etiquetas.split(",")
+        console.log(etiquetas)
+        let gasto = new gestionPresupuesto.CrearGasto(descripcion,valor,fecha, ...etiquetas)
         let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}`,
         {
             method: "POST",
-            header: {"Content-Type":"application/json"},
+            headers: {"Content-Type":"application/json"},
             body: JSON.stringify(gasto)
         })
-        console.log(await promise.text())
-        console.log(gasto)
         cargarGastos();
     }
 }
