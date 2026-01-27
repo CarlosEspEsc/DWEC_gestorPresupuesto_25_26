@@ -202,8 +202,9 @@ function EditarHandleFormulario(){
             this.gasto.etiquetas = formulario[3].value.split(",")
             repintar()
         })
-        let botonAñadirAPI = formulario.getElementsByClassName("gasto-enviar-api")
-        let objEnviarAPI = new EnviarAPI()
+        let botonAñadirAPI = formulario.getElementsByClassName("gasto-enviar-api")  
+        let objEnviarAPI = new ModificarAPI()
+        objEnviarAPI.gasto = this.gasto;
         objEnviarAPI.formulario = formulario
         botonAñadirAPI[0].addEventListener("click", objEnviarAPI)
     }
@@ -343,7 +344,6 @@ function EnviarAPI(){
         fecha = this.formulario[2].value 
         let etiquetas = this.formulario[3].value 
         etiquetas = etiquetas.split(",")
-        console.log(etiquetas)
         let gasto = new gestionPresupuesto.CrearGasto(descripcion,valor,fecha, ...etiquetas)
         let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}`,
         {
@@ -351,6 +351,8 @@ function EnviarAPI(){
             headers: {"Content-Type":"application/json"},
             body: JSON.stringify(gasto)
         })
+        let botonForm = document.getElementById("anyadirgasto-formulario")
+        botonForm.removeAttribute("disabled")
         cargarGastos();
     }
 }
@@ -365,9 +367,9 @@ function ModificarAPI(){
         etiquetas = etiquetas.split(",")
         console.log(etiquetas)
         let gasto = new gestionPresupuesto.CrearGasto(descripcion,valor,fecha, ...etiquetas)
-        let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}`,
+        let promise = await fetch(`https://gestion-presupuesto-api.onrender.com/api/${nombreUsuario}/${this.gasto.gastoId}`,
         {
-            method: "POST",
+            method: "PUT",
             headers: {"Content-Type":"application/json"},
             body: JSON.stringify(gasto)
         })
